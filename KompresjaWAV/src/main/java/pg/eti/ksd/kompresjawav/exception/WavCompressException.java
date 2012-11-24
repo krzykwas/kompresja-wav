@@ -10,7 +10,7 @@ package pg.eti.ksd.kompresjawav.exception;
  */
 public class WavCompressException extends Exception {
 
-    public WavCompressException(Exception ex) {
-        super(ex);
+    public WavCompressException(String message) {
+        super(message);
     }
 }
