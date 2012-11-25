@@ -32,7 +32,7 @@ public class StreamImpl implements Stream {
      * @param inputStream strumień wejściowy
      * @param windowWidth szerokość okna (liczba próbek)
      * @param overlapSize liczba próbek, o którą nakrywają się kolejne okna
-     * @param frameSize szerokość ramki
+     * @param frameSize szerokość ramki (liczba bajtów na jedną próbkę)
      * @throws WavCompressException jeżeli otrzyma niepoprawne argumenty
      */
     public StreamImpl(InputStream inputStream, int windowWidth, int overlapSize, int frameSize) throws WavCompressException {

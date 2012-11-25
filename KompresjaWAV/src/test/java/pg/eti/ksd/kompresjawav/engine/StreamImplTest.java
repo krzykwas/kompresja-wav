@@ -143,4 +143,11 @@ public class StreamImplTest {
         Assert.assertEquals(asList(new int[]{0, 1, 2}), sut.nextWindow());
         Assert.assertEquals(asList(new int[]{2, 3, 4}), sut.nextWindow());
     }
+
+    @Test
+    public void test_nextWindow_withFrame2_producesCorrectData() throws WavCompressException {
+        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{0, 1, 1, 0, 1, 1, 1, 0}), 3, 1, 2);
+        Assert.assertEquals(asList(new int[]{0, 1, 256}), sut.nextWindow());
+        Assert.assertEquals(asList(new int[]{256, 257, 256}), sut.nextWindow());
+    }
 }
