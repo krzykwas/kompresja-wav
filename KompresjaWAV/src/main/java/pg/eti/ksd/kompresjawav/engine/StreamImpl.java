@@ -83,10 +83,12 @@ public class StreamImpl implements Stream {
     }
 
     protected Sample nextSample() {
+        final int byteSize = Integer.SIZE / 8;
         int data = 0;
 
         try {
-            for (int i = 0; i < frameSize; i++) {
+            int i;
+            for (i = 0; i < frameSize; i++) {
                 int bajt = stream.read();
                 if (bajt == -1) {
                     return null;
@@ -94,6 +96,12 @@ public class StreamImpl implements Stream {
 
                 data = (data << 8) + bajt;
             }
+
+            for (; i < byteSize; i++) {
+                data <<= 8;
+            }
+
+            data /= (1 << (8 * (byteSize - frameSize)));
         } catch (IOException ex) {
             Logger.getLogger(StreamImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
