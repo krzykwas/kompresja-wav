@@ -29,7 +29,7 @@ public class Main {
         try {
             final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(args[0]));
             final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);
-            stream = new StreamImpl(audioInputStream, 500, 10, audioInputStream.getFormat().getFrameSize());
+            stream = new StreamImpl(audioInputStream, 256, 10, audioInputStream.getFormat().getFrameSize());
 
             do {
                 List<Sample> samples = stream.nextWindow();
