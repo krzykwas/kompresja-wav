@@ -13,6 +13,11 @@ import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
+import pg.eti.ksd.kompresjawav.coder.Coder;
+import pg.eti.ksd.kompresjawav.coder.CoderImpl;
+import pg.eti.ksd.kompresjawav.coder.Decoder;
+import pg.eti.ksd.kompresjawav.coder.DecoderImpl;
+import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
 import pg.eti.ksd.kompresjawav.engine.Sample;
 import pg.eti.ksd.kompresjawav.engine.Stream;
 import pg.eti.ksd.kompresjawav.engine.StreamImpl;
@@ -30,19 +35,11 @@ public class Main {
             final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(args[0]));
             final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);
             stream = new StreamImpl(audioInputStream, 256, 10, audioInputStream.getFormat().getFrameSize());
+            Coder coder = new CoderImpl(stream, 10);
+            List<CompressedPacket> compressed = coder.encode();
 
-            do {
-                List<Sample> samples = stream.nextWindow();
-
-                if (samples.isEmpty()) {
-                    break;
-                }
-
-                for (Sample sample : samples) {
-                    System.out.print(sample.getValue() + " ");
-                }
-                System.out.println();
-            } while (true);
+            Decoder decoder = new DecoderImpl(10);
+            List<Sample> uncompressed = decoder.decode(compressed);
         } catch (UnsupportedAudioFileException | IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

@@ -21,5 +21,4 @@ public interface LevinsonDurbin {
      * @return list of coefficients of size equal to filterOrder
      */
     List<Double> identifyCoefficients(List<Sample> window, int filterOrder);
-    
 }

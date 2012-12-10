@@ -5,7 +5,6 @@
 package pg.eti.ksd.kompresjawav.engine;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,34 +26,41 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
     public List<Double> identifyCoefficients(List<Sample> window, int filterOrder) {
         final List<Sample> flattened = flattenWindow(window);
         final List<Double> r = calculateAutocorrelationCoefficients(flattened, filterOrder);
-        final Double[] coefficients = new Double[filterOrder];
+        final List<Double> coefficients = new ArrayList<>();
 
-        coefficients[0] = 1.0;
+        for (int i = 0; i < filterOrder; i++) {
+            coefficients.add(0.0);
+        }
+
+        coefficients.set(0, 1.0);
         double k = -r.get(1) / r.get(0);
-        coefficients[1] = k;
+        coefficients.set(1, k);
         double a = r.get(0) * (1 - k * k);
 
         for (int i = 2; i < filterOrder; i++) {
             double s = r.get(i);
 
             for (int j = 1; j <= i - 1; j++) {
-                s += r.get(j) * coefficients[i - j];
+                s += r.get(j) * coefficients.get(i - j);
             }
 
             k = -s / a;
 
-            final Double[] newCoefficients = new Double[filterOrder];
+            final List<Double> newCoefficients = new ArrayList<>();
 
             for (int j = 1; j <= i - 1; j++) {
-                newCoefficients[j] += coefficients[j] + k * coefficients[i - j];
+                newCoefficients.add(coefficients.get(j) + k * coefficients.get(i - j));
             }
 
-            newCoefficients[i] = k;
+            newCoefficients.add(k);
             a *= 1 - k * k;
-            System.arraycopy(newCoefficients, 0, coefficients, 0, newCoefficients.length);
+
+            for (int j = 0; j < newCoefficients.size(); j++) {
+                coefficients.set(j, newCoefficients.get(j));
+            }
         }
 
-        return new ArrayList<>(Arrays.asList(coefficients));
+        return coefficients;
     }
 
     /**

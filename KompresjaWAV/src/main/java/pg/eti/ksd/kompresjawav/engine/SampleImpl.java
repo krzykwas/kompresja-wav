@@ -8,7 +8,7 @@ package pg.eti.ksd.kompresjawav.engine;
  *
  * @author krzykwas
  */
-class SampleImpl implements Sample {
+public class SampleImpl implements Sample {
 
     private int value;
 
