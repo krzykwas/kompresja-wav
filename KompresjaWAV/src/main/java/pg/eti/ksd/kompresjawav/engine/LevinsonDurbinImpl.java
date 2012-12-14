@@ -6,6 +6,8 @@ package pg.eti.ksd.kompresjawav.engine;
 
 import java.util.ArrayList;
 import java.util.List;
+import pg.eti.ksd.kompresjawav.stream.Sample;
+import pg.eti.ksd.kompresjawav.stream.WavWindow;
 
 /**
  * Implemenetation of a Levinson-Durbin algorithm.
@@ -23,7 +25,7 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
      * @return list of coefficients of size equal to filterOrder
      */
     @Override
-    public List<Double> identifyCoefficients(List<Sample> window, int filterOrder) {
+    public List<Double> identifyCoefficients(WavWindow window, int filterOrder) {
         final List<Sample> flattened = flattenWindow(window);
         final List<Double> r = calculateAutocorrelationCoefficients(flattened, filterOrder);
         final List<Double> coefficients = new ArrayList<>();
@@ -80,9 +82,10 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
         return formattingWindow;
     }
 
-    List<Sample> flattenWindow(List<Sample> window) {
-        final List<Sample> flattened = new ArrayList<>(window);
-        final List<Double> formattingWindow = createFormattingWindow(window.size());
+    List<Sample> flattenWindow(WavWindow window) {
+        final List<Sample> flattened = new ArrayList<>(window.getSamples());
+        final List<Double> formattingWindow = createFormattingWindow(window
+                .getSamples().size());
 
         for (int i = 0; i < flattened.size(); i++) {
             double value = flattened.get(i).getValue();

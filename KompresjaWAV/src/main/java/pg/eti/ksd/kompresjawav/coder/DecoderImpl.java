@@ -7,8 +7,10 @@ package pg.eti.ksd.kompresjawav.coder;
 import java.util.ArrayList;
 import java.util.List;
 import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
-import pg.eti.ksd.kompresjawav.engine.Sample;
-import pg.eti.ksd.kompresjawav.engine.SampleImpl;
+import pg.eti.ksd.kompresjawav.stream.Sample;
+import pg.eti.ksd.kompresjawav.stream.SampleImpl;
+import pg.eti.ksd.kompresjawav.stream.WavWindow;
+import pg.eti.ksd.kompresjawav.stream.WavWindowImpl;
 
 /**
  *
@@ -23,17 +25,13 @@ public class DecoderImpl implements Decoder {
     }
 
     @Override
-    public List<Sample> decode(List<CompressedPacket> packets) {
-        final List<Sample> result = new ArrayList<>();
+    public WavWindow decode(CompressedPacket packet) {
+        WavWindow window = new WavWindowImpl();
+        List<Double> coefficients = packet.getCoefficients();
+        List<Double> errors = packet.getErrors();
+        window.getSamples().addAll(predictSamples(coefficients, errors));
 
-        for (CompressedPacket packet : packets) {
-            List<Double> coefficients = packet.getCoefficients();
-            List<Double> errors = packet.getErrors();
-
-            result.addAll(predictSamples(coefficients, errors));
-        }
-
-        return result;
+        return window;
     }
 
     List<Sample> predictSamples(List<Double> coefficients, List<Double> errors) {

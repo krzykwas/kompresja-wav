@@ -5,13 +5,15 @@
 package pg.eti.ksd.kompresjawav.coder;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
 import pg.eti.ksd.kompresjawav.engine.CompressedPacketImpl;
 import pg.eti.ksd.kompresjawav.engine.LevinsonDurbin;
 import pg.eti.ksd.kompresjawav.engine.LevinsonDurbinImpl;
-import pg.eti.ksd.kompresjawav.engine.Sample;
-import pg.eti.ksd.kompresjawav.engine.Stream;
+import pg.eti.ksd.kompresjawav.stream.Sample;
+import pg.eti.ksd.kompresjawav.stream.Stream;
+import pg.eti.ksd.kompresjawav.stream.WavWindow;
 
 /**
  *
@@ -28,26 +30,6 @@ public class CoderImpl implements Coder {
         this.filterOrder = filterOrder;
     }
 
-    @Override
-    public List<CompressedPacket> encode() {
-        final List<CompressedPacket> result = new ArrayList<>();
-
-        while (true) {
-            List<Sample> window = stream.nextWindow();
-
-            if (window.isEmpty()) {
-                break;
-            }
-
-            List<Double> coefficients = levinsonDurbin.identifyCoefficients(window, filterOrder);
-            List<Double> errors = computeErrors(coefficients, window);
-
-            result.add(new CompressedPacketImpl(coefficients, errors));
-        }
-
-        return result;
-    }
-
     double computeError(List<Double> coefficients, List<Sample> samples, int k) {
         return samples.get(k).getValue() - CoderUtilitiesImpl.predictSample(coefficients, samples, k, filterOrder);
     }
@@ -60,5 +42,28 @@ public class CoderImpl implements Coder {
         }
 
         return errors;
+    }
+
+    @Override
+    public Iterator<CompressedPacket> iterator() {
+        return this;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return stream.hasNext();
+    }
+
+    @Override
+    public CompressedPacket next() {
+        WavWindow window = stream.next();
+        List<Double> coefficients = levinsonDurbin.identifyCoefficients(window, filterOrder);
+        List<Double> errors = computeErrors(coefficients, window.getSamples());
+
+        return new CompressedPacketImpl(coefficients, errors);
+    }
+
+    @Override
+    public void remove() {
     }
 }

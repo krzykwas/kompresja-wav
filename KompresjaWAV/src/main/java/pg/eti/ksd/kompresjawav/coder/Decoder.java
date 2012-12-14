@@ -4,9 +4,8 @@
  */
 package pg.eti.ksd.kompresjawav.coder;
 
-import java.util.List;
 import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
-import pg.eti.ksd.kompresjawav.engine.Sample;
+import pg.eti.ksd.kompresjawav.stream.WavWindow;
 
 /**
  *
@@ -14,6 +13,5 @@ import pg.eti.ksd.kompresjawav.engine.Sample;
  */
 public interface Decoder {
 
-    List<Sample> decode(List<CompressedPacket> packets);
-    
+    WavWindow decode(CompressedPacket packet);
 }

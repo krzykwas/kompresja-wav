@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Test;
-import pg.eti.ksd.kompresjawav.engine.Sample;
-import pg.eti.ksd.kompresjawav.engine.SampleImpl;
+import pg.eti.ksd.kompresjawav.stream.Sample;
+import pg.eti.ksd.kompresjawav.stream.SampleImpl;
 
 /**
  *

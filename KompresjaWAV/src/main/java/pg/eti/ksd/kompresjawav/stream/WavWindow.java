@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package pg.eti.ksd.kompresjawav.engine;
+package pg.eti.ksd.kompresjawav.stream;
 
 import java.util.List;
 
@@ -10,9 +10,8 @@ import java.util.List;
  *
  * @author krzykwas
  */
-public interface Stream {
+public interface WavWindow {
 
-    void close();
-
-    List<Sample> nextWindow();
+    List<Sample> getSamples();
+    
 }

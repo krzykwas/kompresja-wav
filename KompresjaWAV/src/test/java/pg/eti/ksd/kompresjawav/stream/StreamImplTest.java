@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package pg.eti.ksd.kompresjawav.engine;
+package pg.eti.ksd.kompresjawav.stream;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -118,36 +118,40 @@ public class StreamImplTest {
     }
 
     @Test
-    public void test_nextWindow_onEmptyStream_returnsEmptyCollection() throws WavCompressException {
-        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{}), 10, 1, 2);
-        List<Sample> window = sut.nextWindow();
-        Assert.assertTrue(window.isEmpty());
-    }
-
-    @Test
-    public void test_nextWindow_invokedTheFirstTime_returnsDataWithOverlap() throws WavCompressException {
+    public void test_next_invokedTheFirstTime_returnsDataWithOverlap() throws WavCompressException {
         final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{1, 2, 3}), 3, 1, 1);
-        Assert.assertEquals(asList(new int[]{0, 1, 2}), sut.nextWindow());
+        Assert.assertEquals(asList(new int[]{0, 1, 2}), sut.next().getSamples());
     }
 
     @Test
-    public void test_nextWindow_invokedTwice_onStreamOfLength_equalToWindowWidthMinus1_returnsEmptyCollection() throws WavCompressException {
-        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{1, 2}), 3, 1, 1);
-        sut.nextWindow();
-        Assert.assertTrue(sut.nextWindow().isEmpty());
-    }
-
-    @Test
-    public void test_nextWindow_maintainsProperOverlapBetweenInvocations() throws WavCompressException {
+    public void test_next_maintainsProperOverlapBetweenInvocations() throws WavCompressException {
         final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{1, 2, 3, 4}), 3, 1, 1);
-        Assert.assertEquals(asList(new int[]{0, 1, 2}), sut.nextWindow());
-        Assert.assertEquals(asList(new int[]{2, 3, 4}), sut.nextWindow());
+        Assert.assertEquals(asList(new int[]{0, 1, 2}), sut.next().getSamples());
+        Assert.assertEquals(asList(new int[]{2, 3, 4}), sut.next().getSamples());
     }
 
     @Test
-    public void test_nextWindow_withFrame2_producesCorrectData() throws WavCompressException {
+    public void test_next_withFrame2_producesCorrectData() throws WavCompressException {
         final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{0, 1, 1, 0, 1, 1, 1, 0}), 3, 1, 2);
-        Assert.assertEquals(asList(new int[]{0, 1, 256}), sut.nextWindow());
-        Assert.assertEquals(asList(new int[]{256, 257, 256}), sut.nextWindow());
+        Assert.assertEquals(asList(new int[]{0, 1, 256}), sut.next().getSamples());
+        Assert.assertEquals(asList(new int[]{256, 257, 256}), sut.next().getSamples());
+    }
+
+    @Test
+    public void test_hasNext_withEmptyStream_returnsFalse() throws WavCompressException {
+        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{}), 2, 1, 2);
+        Assert.assertFalse(sut.hasNext());
+    }
+
+    @Test
+    public void test_hasNext_withNonEmptyStream_returnsTrue() throws WavCompressException {
+        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{1, 2, 3, 4, 5, 6, 7}), 2, 1, 2);
+        Assert.assertTrue(sut.hasNext());
+    }
+
+    @Test
+    public void test_iterator_returnsThis() throws WavCompressException {
+        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{}), 2, 1, 2);
+        Assert.assertSame(sut, sut.iterator());
     }
 }

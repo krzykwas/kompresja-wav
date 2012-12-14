@@ -5,7 +5,7 @@
 package pg.eti.ksd.kompresjawav.coder;
 
 import java.util.List;
-import pg.eti.ksd.kompresjawav.engine.Sample;
+import pg.eti.ksd.kompresjawav.stream.Sample;
 
 /**
  *

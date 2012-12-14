@@ -9,6 +9,10 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import pg.eti.ksd.kompresjawav.stream.Sample;
+import pg.eti.ksd.kompresjawav.stream.SampleImpl;
+import pg.eti.ksd.kompresjawav.stream.WavWindow;
+import pg.eti.ksd.kompresjawav.stream.WavWindowImpl;
 
 /**
  *
@@ -37,9 +41,10 @@ public class LevinsonDurbinImplTest {
 
     @Test
     public void flattenWindow_correctlyFlattensWindowOfSize5_withSamplesEqualTo10() {
-        List<Sample> window = new ArrayList<>();
+        WavWindow window = new WavWindowImpl();
+        List<Sample> samples = window.getSamples();
         for (int i = 0; i < 5; i++) {
-            window.add(new SampleImpl(10));
+            samples.add(new SampleImpl(10));
         }
 
         List<Sample> expected = new ArrayList<>();

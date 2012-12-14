@@ -4,15 +4,12 @@
  */
 package pg.eti.ksd.kompresjawav.coder;
 
-import java.util.List;
+import java.util.Iterator;
 import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
 
 /**
  *
  * @author krzykwas
  */
-public interface Coder {
-
-    List<CompressedPacket> encode();
-    
+public interface Coder extends Iterable<CompressedPacket>, Iterator<CompressedPacket> {
 }

@@ -2,12 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package pg.eti.ksd.kompresjawav.engine;
+package pg.eti.ksd.kompresjawav.stream;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -50,38 +51,6 @@ public class StreamImpl implements Stream {
         }
     }
 
-    /**
-     * Zwraca kolejne okno.
-     *
-     * @return lista próbek kolejnego okna
-     */
-    @Override
-    public List<Sample> nextWindow() {
-        List<Sample> window = new ArrayList<>(overlap);
-
-        for (int i = 0; i < windowWidth - overlap.size(); i++) {
-            Sample sample = nextSample();
-
-            if (sample == null) {
-                break;
-            }
-
-            window.add(sample);
-        }
-
-        overlap.clear();
-
-        try {
-            for (int i = 0; i < overlapSize; i++) {
-                overlap.add(window.get(window.size() - overlapSize + i));
-            }
-        } catch (Exception w) {
-        }
-
-        //Return an empty list if there is no more data, otherwise a new window.
-        return window.size() > overlapSize ? window : new ArrayList<Sample>();
-    }
-
     protected Sample nextSample() {
         final int byteSize = Integer.SIZE / 8;
         int data = 0;
@@ -119,5 +88,50 @@ public class StreamImpl implements Stream {
         } catch (IOException ex) {
             Logger.getLogger(StreamImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    @Override
+    public Iterator<WavWindow> iterator() {
+        return this;
+    }
+
+    @Override
+    public boolean hasNext() {
+        stream.mark(10000);
+        boolean hasNext = nextSample() != null;
+
+        try {
+            stream.reset();
+        } catch (IOException ex) {
+            Logger.getLogger(StreamImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return hasNext;
+    }
+
+    @Override
+    public WavWindow next() {
+        WavWindow window = new WavWindowImpl();
+        List<Sample> samples = window.getSamples();
+        samples.addAll(overlap);
+
+        while (samples.size() < windowWidth) {
+            Sample sample = nextSample();
+
+            if (sample == null) {
+                break;
+            }
+
+            samples.add(sample);
+        }
+
+        overlap.clear();
+        overlap.addAll(new ArrayList<>(samples.subList(Math.max(samples.size() - overlapSize, 0), samples.size())));
+
+        return window;
+    }
+
+    @Override
+    public void remove() {
     }
 }

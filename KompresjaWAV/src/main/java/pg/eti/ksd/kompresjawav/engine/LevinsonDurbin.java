@@ -5,6 +5,7 @@
 package pg.eti.ksd.kompresjawav.engine;
 
 import java.util.List;
+import pg.eti.ksd.kompresjawav.stream.WavWindow;
 
 /**
  *
@@ -20,5 +21,5 @@ public interface LevinsonDurbin {
      * @param filterOrder
      * @return list of coefficients of size equal to filterOrder
      */
-    List<Double> identifyCoefficients(List<Sample> window, int filterOrder);
+    List<Double> identifyCoefficients(WavWindow window, int filterOrder);
 }
