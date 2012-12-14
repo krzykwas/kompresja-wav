@@ -26,43 +26,36 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
      */
     @Override
     public List<Double> identifyCoefficients(WavWindow window, int filterOrder) {
-        final List<Sample> flattened = flattenWindow(window);
-        final List<Double> r = calculateAutocorrelationCoefficients(flattened, filterOrder);
-        final List<Double> coefficients = new ArrayList<>();
+        final List<Sample> flattenedWindow = flattenWindow(window);
+        final List<Double> p = calculateAutocorrelationCoefficients(flattenedWindow, filterOrder);
+        final List<Double> a = new ArrayList<>();
 
         for (int i = 0; i < filterOrder; i++) {
-            coefficients.add(0.0);
+            a.add(0.0);
         }
 
-        coefficients.set(0, 1.0);
-        double k = -r.get(1) / r.get(0);
-        coefficients.set(1, k);
-        double a = r.get(0) * (1 - k * k);
+        double e = p.get(0);
 
-        for (int i = 2; i < filterOrder; i++) {
-            double s = r.get(i);
-
+        for (int i = 1; i <= filterOrder; i++) {
+            double k = p.get(i - 1);
             for (int j = 1; j <= i - 1; j++) {
-                s += r.get(j) * coefficients.get(i - j);
+                k -= a.get(j - 1) * p.get(i - j - 1);
             }
+            k /= e;
 
-            k = -s / a;
-
-            final List<Double> newCoefficients = new ArrayList<>();
-
+            List<Double> newA = new ArrayList<>();
             for (int j = 1; j <= i - 1; j++) {
-                newCoefficients.add(coefficients.get(j) + k * coefficients.get(i - j));
+                newA.add(a.get(j - 1) - k * a.get(i - j - 1));
             }
+            newA.add(k);
 
-            newCoefficients.add(k);
-            a *= 1 - k * k;
+            a.clear();
+            a.addAll(newA);
 
-            for (int j = 0; j < newCoefficients.size(); j++) {
-                coefficients.set(j, newCoefficients.get(j));
-            }
+            e = 1 - k * k * e;
         }
 
-        return coefficients;
+        return a;
     }
 
     /**
