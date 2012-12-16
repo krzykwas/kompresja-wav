@@ -29,14 +29,18 @@ public class DecoderImpl implements Decoder {
 
     @Override
     public WavWindow decode(CompressedPacket packet) {
-        WavWindow window = new WavWindowImpl();
         List<Double> coefficients = packet.getCoefficients();
         List<Double> errors = packet.getErrors();
-        window.getSamples().addAll(predictSamples(coefficients, errors));
+        final List<Sample> predictedSamples = predictSamples(coefficients, errors);
 
-        outputStream.write(window);
+        WavWindow streamWindow = new WavWindowImpl();
+        streamWindow.getSamples().addAll(predictedSamples.subList(filterOrder, predictedSamples.size()));
+        outputStream.write(streamWindow);
 
-        return window;
+        WavWindow resultWindow = new WavWindowImpl();
+        resultWindow.getSamples().addAll(predictedSamples);
+
+        return resultWindow;
     }
 
     List<Sample> predictSamples(List<Double> coefficients, List<Double> errors) {
