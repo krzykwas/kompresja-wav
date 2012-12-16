@@ -83,28 +83,28 @@ public class StreamImplTest {
 
     @Test(expected = WavCompressException.class)
     public void test_StreamImpl_ifOverlapBiggerThanWindow_throws_WavCompressException() throws WavCompressException {
-        Stream stream = new StreamImpl(new StreamMock(new byte[]{1}), 10, 20, 2);
+        WavInputStream stream = new WavInputStreamImpl(new StreamMock(new byte[]{1}), 10, 20, 2);
     }
 
     @Test(expected = WavCompressException.class)
     public void test_StreamImpl_ifOverlapNonPositive_throws_WavCompressException() throws WavCompressException {
-        Stream stream = new StreamImpl(new StreamMock(new byte[]{1}), 10, 0, 2);
+        WavInputStream stream = new WavInputStreamImpl(new StreamMock(new byte[]{1}), 10, 0, 2);
     }
 
     @Test(expected = WavCompressException.class)
     public void test_StreamImpl_ifWindowNonPositive_throws_WavCompressException() throws WavCompressException {
-        Stream stream = new StreamImpl(new StreamMock(new byte[]{1}), 0, 10, 2);
+        WavInputStream stream = new WavInputStreamImpl(new StreamMock(new byte[]{1}), 0, 10, 2);
     }
 
     @Test(expected = WavCompressException.class)
     public void test_StreamImpl_ifFrameNonPositive_throws_WavCompressException() throws WavCompressException {
-        Stream stream = new StreamImpl(new StreamMock(new byte[]{1}), 20, 10, 0);
+        WavInputStream stream = new WavInputStreamImpl(new StreamMock(new byte[]{1}), 20, 10, 0);
     }
 
     @Test
     public void test_close_closesUnderlyingStream() throws WavCompressException {
         final StreamMock streamMock = new StreamMock(new byte[]{1});
-        Stream stream = new StreamImpl(streamMock, 50, 10, 2);
+        WavInputStream stream = new WavInputStreamImpl(streamMock, 50, 10, 2);
         stream.close();
 
         Assert.assertTrue(streamMock.isClosed());
@@ -113,45 +113,45 @@ public class StreamImplTest {
     @Test
     public void test_close_whenUnderlyingStreamThrowsAnException_onlyLogsTheException() throws WavCompressException {
         final UncloseableStreamMock streamMock = new UncloseableStreamMock();
-        Stream stream = new StreamImpl(streamMock, 50, 10, 2);
+        WavInputStream stream = new WavInputStreamImpl(streamMock, 50, 10, 2);
         stream.close();
     }
 
     @Test
     public void test_next_invokedTheFirstTime_returnsDataWithOverlap() throws WavCompressException {
-        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{1, 2, 3}), 3, 1, 1);
+        final WavInputStreamImpl sut = new WavInputStreamImpl(new StreamMock(new byte[]{1, 2, 3}), 3, 1, 1);
         Assert.assertEquals(asList(new int[]{0, 1, 2}), sut.next().getSamples());
     }
 
     @Test
     public void test_next_maintainsProperOverlapBetweenInvocations() throws WavCompressException {
-        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{1, 2, 3, 4}), 3, 1, 1);
+        final WavInputStreamImpl sut = new WavInputStreamImpl(new StreamMock(new byte[]{1, 2, 3, 4}), 3, 1, 1);
         Assert.assertEquals(asList(new int[]{0, 1, 2}), sut.next().getSamples());
         Assert.assertEquals(asList(new int[]{2, 3, 4}), sut.next().getSamples());
     }
 
     @Test
     public void test_next_withFrame2_producesCorrectData() throws WavCompressException {
-        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{0, 1, 1, 0, 1, 1, 1, 0}), 3, 1, 2);
+        final WavInputStreamImpl sut = new WavInputStreamImpl(new StreamMock(new byte[]{0, 1, 1, 0, 1, 1, 1, 0}), 3, 1, 2);
         Assert.assertEquals(asList(new int[]{0, 1, 256}), sut.next().getSamples());
         Assert.assertEquals(asList(new int[]{256, 257, 256}), sut.next().getSamples());
     }
 
     @Test
     public void test_hasNext_withEmptyStream_returnsFalse() throws WavCompressException {
-        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{}), 2, 1, 2);
+        final WavInputStreamImpl sut = new WavInputStreamImpl(new StreamMock(new byte[]{}), 2, 1, 2);
         Assert.assertFalse(sut.hasNext());
     }
 
     @Test
     public void test_hasNext_withNonEmptyStream_returnsTrue() throws WavCompressException {
-        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{1, 2, 3, 4, 5, 6, 7}), 2, 1, 2);
+        final WavInputStreamImpl sut = new WavInputStreamImpl(new StreamMock(new byte[]{1, 2, 3, 4, 5, 6, 7}), 2, 1, 2);
         Assert.assertTrue(sut.hasNext());
     }
 
     @Test
     public void test_iterator_returnsThis() throws WavCompressException {
-        final StreamImpl sut = new StreamImpl(new StreamMock(new byte[]{}), 2, 1, 2);
+        final WavInputStreamImpl sut = new WavInputStreamImpl(new StreamMock(new byte[]{}), 2, 1, 2);
         Assert.assertSame(sut, sut.iterator());
     }
 }

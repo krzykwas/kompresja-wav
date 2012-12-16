@@ -26,7 +26,7 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
      */
     @Override
     public List<Double> identifyCoefficients(WavWindow window, int filterOrder) {
-        final List<Sample> flattenedWindow = flattenWindow(window);
+        final List<Sample> flattenedWindow = window.getSamples();//flattenWindow(window);
         final List<Double> p = calculateAutocorrelationCoefficients(flattenedWindow, filterOrder);
         final List<Double> a = new ArrayList<>();
 

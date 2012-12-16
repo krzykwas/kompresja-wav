@@ -18,7 +18,7 @@ import pg.eti.ksd.kompresjawav.exception.WavCompressException;
  *
  * @author krzykwas
  */
-public class StreamImpl implements Stream {
+public class WavInputStreamImpl implements WavInputStream {
 
     private final BufferedInputStream stream;
     private final int windowWidth;
@@ -33,10 +33,10 @@ public class StreamImpl implements Stream {
      * @param inputStream strumień wejściowy
      * @param windowWidth szerokość okna (liczba próbek)
      * @param overlapSize liczba próbek, o którą nakrywają się kolejne okna
-     * @param frameSize szerokość ramki (liczba bajtów na jedną próbkę)
+     * @param frameSize szerokość próbki (liczba bajtów na jedną próbkę)
      * @throws WavCompressException jeżeli otrzyma niepoprawne argumenty
      */
-    public StreamImpl(InputStream inputStream, int windowWidth, int overlapSize, int frameSize) throws WavCompressException {
+    public WavInputStreamImpl(InputStream inputStream, int windowWidth, int overlapSize, int frameSize) throws WavCompressException {
         this.stream = new BufferedInputStream(inputStream);
         this.windowWidth = windowWidth;
         this.frameSize = frameSize;
@@ -72,7 +72,7 @@ public class StreamImpl implements Stream {
 
             data /= (1 << (8 * (byteSize - frameSize)));
         } catch (IOException ex) {
-            Logger.getLogger(StreamImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WavInputStreamImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return new SampleImpl(data);
@@ -86,7 +86,7 @@ public class StreamImpl implements Stream {
         try {
             stream.close();
         } catch (IOException ex) {
-            Logger.getLogger(StreamImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WavInputStreamImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -103,7 +103,7 @@ public class StreamImpl implements Stream {
         try {
             stream.reset();
         } catch (IOException ex) {
-            Logger.getLogger(StreamImpl.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(WavInputStreamImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return hasNext;

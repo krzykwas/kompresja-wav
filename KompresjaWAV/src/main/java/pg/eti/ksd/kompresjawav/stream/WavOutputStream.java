@@ -4,13 +4,15 @@
  */
 package pg.eti.ksd.kompresjawav.stream;
 
-import java.util.Iterator;
+import java.io.IOException;
 
 /**
  *
  * @author krzykwas
  */
-public interface Stream extends Iterable<WavWindow>, Iterator<WavWindow> {
+public interface WavOutputStream {
 
-    void close();
+    void close() throws IOException;
+
+    void write(WavWindow window);
 }

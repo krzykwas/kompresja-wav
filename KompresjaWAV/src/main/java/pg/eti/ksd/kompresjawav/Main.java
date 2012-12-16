@@ -6,6 +6,7 @@ package pg.eti.ksd.kompresjawav;
 
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,9 +19,10 @@ import pg.eti.ksd.kompresjawav.coder.Decoder;
 import pg.eti.ksd.kompresjawav.coder.DecoderImpl;
 import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
 import pg.eti.ksd.kompresjawav.exception.WavCompressException;
-import pg.eti.ksd.kompresjawav.stream.Stream;
-import pg.eti.ksd.kompresjawav.stream.StreamImpl;
-import pg.eti.ksd.kompresjawav.stream.WavWindow;
+import pg.eti.ksd.kompresjawav.stream.WavInputStream;
+import pg.eti.ksd.kompresjawav.stream.WavInputStreamImpl;
+import pg.eti.ksd.kompresjawav.stream.WavOutputStream;
+import pg.eti.ksd.kompresjawav.stream.WavOutputStreamImpl;
 
 /**
  *
@@ -29,22 +31,33 @@ import pg.eti.ksd.kompresjawav.stream.WavWindow;
 public class Main {
 
     public static void main(String[] args) throws WavCompressException {
-        Stream stream = null;
+        WavInputStream inputStream = null;
+        WavOutputStream outputStream = null;
         try {
             final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(args[0]));
             final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);
-            stream = new StreamImpl(audioInputStream, 256, 10, audioInputStream.getFormat().getFrameSize());
-            Coder coder = new CoderImpl(stream, 10);
-            Decoder decoder = new DecoderImpl(10);
+            inputStream = new WavInputStreamImpl(audioInputStream, 256, 10, audioInputStream.getFormat().getFrameSize());
+            outputStream = new WavOutputStreamImpl(new FileOutputStream(args[1]), audioInputStream.getFormat());
+
+            Coder coder = new CoderImpl(inputStream, 10);
+            Decoder decoder = new DecoderImpl(outputStream, 10);
 
             for (CompressedPacket compressedPacket : coder) {
-                WavWindow uncompressed = decoder.decode(compressedPacket);
+                decoder.decode(compressedPacket);
             }
         } catch (UnsupportedAudioFileException | IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            if (stream != null) {
-                stream.close();
+            if (inputStream != null) {
+                inputStream.close();
+            }
+
+            if (outputStream != null) {
+                try {
+                    outputStream.close();
+                } catch (IOException ex) {
+                    Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
     }

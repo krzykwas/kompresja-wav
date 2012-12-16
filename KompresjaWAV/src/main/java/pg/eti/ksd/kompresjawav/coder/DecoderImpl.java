@@ -9,6 +9,7 @@ import java.util.List;
 import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
 import pg.eti.ksd.kompresjawav.stream.Sample;
 import pg.eti.ksd.kompresjawav.stream.SampleImpl;
+import pg.eti.ksd.kompresjawav.stream.WavOutputStream;
 import pg.eti.ksd.kompresjawav.stream.WavWindow;
 import pg.eti.ksd.kompresjawav.stream.WavWindowImpl;
 
@@ -19,8 +20,10 @@ import pg.eti.ksd.kompresjawav.stream.WavWindowImpl;
 public class DecoderImpl implements Decoder {
 
     private final int filterOrder;
+    private final WavOutputStream outputStream;
 
-    public DecoderImpl(int filterOrder) {
+    public DecoderImpl(WavOutputStream outputStream, int filterOrder) {
+        this.outputStream = outputStream;
         this.filterOrder = filterOrder;
     }
 
@@ -30,6 +33,8 @@ public class DecoderImpl implements Decoder {
         List<Double> coefficients = packet.getCoefficients();
         List<Double> errors = packet.getErrors();
         window.getSamples().addAll(predictSamples(coefficients, errors));
+
+        outputStream.write(window);
 
         return window;
     }

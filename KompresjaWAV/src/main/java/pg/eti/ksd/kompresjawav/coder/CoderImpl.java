@@ -12,7 +12,7 @@ import pg.eti.ksd.kompresjawav.engine.CompressedPacketImpl;
 import pg.eti.ksd.kompresjawav.engine.LevinsonDurbin;
 import pg.eti.ksd.kompresjawav.engine.LevinsonDurbinImpl;
 import pg.eti.ksd.kompresjawav.stream.Sample;
-import pg.eti.ksd.kompresjawav.stream.Stream;
+import pg.eti.ksd.kompresjawav.stream.WavInputStream;
 import pg.eti.ksd.kompresjawav.stream.WavWindow;
 
 /**
@@ -21,11 +21,11 @@ import pg.eti.ksd.kompresjawav.stream.WavWindow;
  */
 public class CoderImpl implements Coder {
 
-    private final Stream stream;
+    private final WavInputStream stream;
     private final int filterOrder;
     private final LevinsonDurbin levinsonDurbin = new LevinsonDurbinImpl();
 
-    public CoderImpl(Stream stream, int filterOrder) {
+    public CoderImpl(WavInputStream stream, int filterOrder) {
         this.stream = stream;
         this.filterOrder = filterOrder;
     }
