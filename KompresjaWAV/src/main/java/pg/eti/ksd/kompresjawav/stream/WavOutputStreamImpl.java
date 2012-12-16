@@ -41,10 +41,11 @@ public class WavOutputStreamImpl implements WavOutputStream {
                 data >>= 8;
             }
 
-            for (int i = 0; i < sampleSize; i++) {
-                int bajt = data & 0xff;
+            for (int i = sampleSize - 1; i >= 0; i--) {
+                int bajt = data & (0xff << 8 * i);
+                bajt >>= 8 * i;
+
                 byteArrayOutputStream.write(bajt);
-                data >>= 8;
             }
         }
     }
