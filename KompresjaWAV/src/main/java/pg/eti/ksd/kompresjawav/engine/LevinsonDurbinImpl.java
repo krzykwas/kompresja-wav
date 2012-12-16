@@ -26,8 +26,8 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
      */
     @Override
     public List<Double> identifyCoefficients(WavWindow window, int filterOrder) {
-        final List<Sample> flattenedWindow = window.getSamples();//flattenWindow(window);
-        final List<Double> p = calculateAutocorrelationCoefficients(flattenedWindow, filterOrder);
+        final List<Sample> samples = window.getSamples();
+        final List<Double> p = calculateAutocorrelationCoefficients(samples, filterOrder);
         final List<Double> a = new ArrayList<>();
 
         for (int i = 0; i < filterOrder; i++) {
@@ -56,36 +56,6 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
         }
 
         return a;
-    }
-
-    /**
-     * Creates a formatting window of size size that flattens the samples'
-     * window at its boundaries.
-     *
-     * @param size
-     * @return formatting window
-     */
-    List<Double> createFormattingWindow(int size) {
-        final List<Double> formattingWindow = new ArrayList<>();
-
-        for (int i = 1; i <= size; i++) {
-            formattingWindow.add(0.5 * (1 - Math.cos(2 * Math.PI * i / (size + 1))));
-        }
-
-        return formattingWindow;
-    }
-
-    List<Sample> flattenWindow(WavWindow window) {
-        final List<Sample> flattened = new ArrayList<>(window.getSamples());
-        final List<Double> formattingWindow = createFormattingWindow(window
-                .getSamples().size());
-
-        for (int i = 0; i < flattened.size(); i++) {
-            double value = flattened.get(i).getValue();
-            flattened.get(i).setValue((int) Math.round(value * formattingWindow.get(i)));
-        }
-
-        return flattened;
     }
 
     List<Double> calculateAutocorrelationCoefficients(List<Sample> window, int filterOder) {
