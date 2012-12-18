@@ -15,7 +15,8 @@ import java.util.Objects;
  */
 public class CompressedPacketImpl implements CompressedPacket {
 
-    public static final int QUANTIZATION_LEVELS = 4;
+    private static final int BITS_PER_VALUE = 16;
+    public static final int QUANTIZATION_LEVELS = (int) Math.pow(2, BITS_PER_VALUE);
     /**
      * Maximum error
      */
@@ -36,15 +37,17 @@ public class CompressedPacketImpl implements CompressedPacket {
 
     @Override
     public List<Double> getErrors() {
-        List<Double> quantizationLevels = computeQuantizationLevels();
-        List<Double> uncompressed = new ArrayList<>();
+        final List<Double> quantizationLevels = computeQuantizationLevels(QUANTIZATION_LEVELS);
+        final List<Double> uncompressed = new ArrayList<>();
 
         for (int i = errors.size() - 1; i >= 0; i--) {
             long packed = errors.get(i);
 
-            for (int j = 0; j < Long.SIZE / 2; j++) {
-                uncompressed.add(quantizationLevels.get((int) (packed & 0x3)));
-                packed >>= 2;
+            for (int j = 0; j < Long.SIZE / BITS_PER_VALUE; j++) {
+                long mask = (1L << BITS_PER_VALUE) - 1;
+                final Double quantizationLevel = quantizationLevels.get((int) (packed & mask));
+                uncompressed.add(quantizationLevel);
+                packed >>= BITS_PER_VALUE;
             }
         }
 
@@ -63,11 +66,11 @@ public class CompressedPacketImpl implements CompressedPacket {
         return max;
     }
 
-    List<Double> computeQuantizationLevels() {
-        List<Double> quantizedErrorLevels = new ArrayList<>();
+    List<Double> computeQuantizationLevels(final int quantizationLevels) {
+        final List<Double> quantizedErrorLevels = new ArrayList<>();
 
-        for (int i = 0; i < QUANTIZATION_LEVELS; i++) {
-            quantizedErrorLevels.add(-eMax + i * 2.0 * eMax / (QUANTIZATION_LEVELS - 1));
+        for (int i = 0; i < quantizationLevels; i++) {
+            quantizedErrorLevels.add(eMax * (-quantizationLevels + 1 + 2 * i) / quantizationLevels);
         }
 
         return quantizedErrorLevels;
@@ -75,21 +78,21 @@ public class CompressedPacketImpl implements CompressedPacket {
 
     final List<Long> compressErrors(List<Double> errors) {
         final List<Long> result = new ArrayList<>();
-        final List<Double> quantizationLevels = computeQuantizationLevels();
+        final List<Double> quantizationLevels = computeQuantizationLevels(QUANTIZATION_LEVELS);
         long packed = 0;
 
         for (int i = 0; i < errors.size(); i++) {
             double error = errors.get(i);
 
             for (int j = 0; j < quantizationLevels.size(); j++) {
-                if (Math.abs(error - quantizationLevels.get(j)) <= 2.0 * eMax / (QUANTIZATION_LEVELS - 1) / 2.0) {
-                    packed <<= 2;
+                if (error <= -eMax + 2.0 * (j + 1) * eMax / QUANTIZATION_LEVELS) {
+                    packed <<= BITS_PER_VALUE;
                     packed += j;
                     break;
                 }
             }
 
-            if (i % (Long.SIZE / 2) == (Long.SIZE / 2 - 1)) {
+            if (i % (Long.SIZE / BITS_PER_VALUE) == (Long.SIZE / BITS_PER_VALUE - 1)) {
                 result.add(packed);
             }
         }

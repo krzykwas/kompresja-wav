@@ -34,25 +34,32 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
             a.add(0.0);
         }
 
-        double e = p.get(0);
+        a.set(0, 1.0);
+        double k = -p.get(1) / p.get(0);
+        a.set(1, k);
 
-        for (int i = 1; i <= filterOrder; i++) {
-            double k = p.get(i - 1);
+        double b = p.get(0) * (1 - k * k);
+
+        for (int i = 2; i < filterOrder; i++) {
+            double s = p.get(i);
+
             for (int j = 1; j <= i - 1; j++) {
-                k -= a.get(j - 1) * p.get(i - j - 1);
+                s += p.get(j) * a.get(i - j);
             }
-            k /= e;
+
+            k = -s / b;
 
             List<Double> newA = new ArrayList<>();
             for (int j = 1; j <= i - 1; j++) {
-                newA.add(a.get(j - 1) - k * a.get(i - j - 1));
+                newA.add(a.get(j) + k * a.get(i - j));
             }
             newA.add(k);
 
-            a.clear();
-            a.addAll(newA);
+            for (int j = 0; j < newA.size(); j++) {
+                a.set(j, newA.get(j));
+            }
 
-            e = 1 - k * k * e;
+            b *= 1 - k * k;
         }
 
         return a;
