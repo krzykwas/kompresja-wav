@@ -23,7 +23,7 @@ public class CoderImplTest {
 
         List<Double> coefficients = Arrays.asList(1.0, 2.0, 3.0);
         List<Sample> samples = Arrays.asList((Sample) new SampleImpl(7), new SampleImpl(2));
-        double actual = sut.computeError(coefficients, samples, 0);
+        double actual = sut.computeError(0, coefficients, samples);
 
         double expected = 7;
 
@@ -36,7 +36,7 @@ public class CoderImplTest {
 
         List<Double> coefficients = Arrays.asList(1.0, 2.0, 3.0);
         List<Sample> samples = Arrays.asList((Sample) new SampleImpl(1), new SampleImpl(2), new SampleImpl(3), new SampleImpl(4), new SampleImpl(17));
-        double actual = sut.computeError(coefficients, samples, 4);
+        double actual = sut.computeError(4, coefficients, samples);
 
         double expected = 17 - (4 * 1 + 3 * 2 + 3 * 2);
 

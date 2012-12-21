@@ -5,6 +5,7 @@
 package pg.eti.ksd.kompresjawav.engine;
 
 import java.util.List;
+import pg.eti.ksd.kompresjawav.stream.Sample;
 
 /**
  *
@@ -15,5 +16,6 @@ public interface CompressedPacket {
     List<Double> getCoefficients();
 
     List<Double> getErrors();
-    
+
+    List<Sample> getInitialValues();
 }

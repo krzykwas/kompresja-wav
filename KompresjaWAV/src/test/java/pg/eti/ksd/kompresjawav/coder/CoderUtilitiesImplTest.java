@@ -22,8 +22,8 @@ public class CoderUtilitiesImplTest {
         List<Double> coefficients = Arrays.asList(new Double[]{1.0, 2.0, 3.0});
         List<Sample> samples = Arrays.asList(new Sample[]{new SampleImpl(10), new SampleImpl(11), new SampleImpl(12), new SampleImpl(14), new SampleImpl(15)});
 
-        double actual = CoderUtilitiesImpl.predictSample(coefficients, samples, 5, 3);
+        double actual = CoderUtilitiesImpl.predictSample(coefficients, samples, 3, 5);
 
-        Assert.assertEquals(actual, 1.0 * 15 + 2.0 * 14 + 3.0 * 12);
+        Assert.assertEquals(1.0 * 15 + 2.0 * 14 + 3.0 * 12, actual);
     }
 }

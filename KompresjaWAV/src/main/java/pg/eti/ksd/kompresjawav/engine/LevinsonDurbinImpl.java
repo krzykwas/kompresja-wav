@@ -26,32 +26,28 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
      */
     @Override
     public List<Double> identifyCoefficients(WavWindow window, int filterOrder) {
-        final List<Sample> samples = window.getSamples();
-        final List<Double> p = calculateAutocorrelationCoefficients(samples, filterOrder);
+        final List<Sample> y = window.getSamples();
+        final List<Double> p = calculateAutocorrelationCoefficients(y, filterOrder);
         final List<Double> a = new ArrayList<>();
 
         for (int i = 0; i < filterOrder; i++) {
             a.add(0.0);
         }
 
-        a.set(0, 1.0);
-        double k = -p.get(1) / p.get(0);
-        a.set(1, k);
+        double s = p.get(0);
 
-        double b = p.get(0) * (1 - k * k);
-
-        for (int i = 2; i < filterOrder; i++) {
-            double s = p.get(i);
+        for (int i = 1; i < filterOrder; i++) {
+            double k = p.get(i);
 
             for (int j = 1; j <= i - 1; j++) {
-                s += p.get(j) * a.get(i - j);
+                k -= a.get(j) * p.get(i - j);
             }
 
-            k = -s / b;
+            k /= s;
 
             List<Double> newA = new ArrayList<>();
-            for (int j = 1; j <= i - 1; j++) {
-                newA.add(a.get(j) + k * a.get(i - j));
+            for (int j = 0; j < i - 1; j++) {
+                newA.add(a.get(j) - k * a.get(i - j));
             }
             newA.add(k);
 
@@ -59,16 +55,16 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
                 a.set(j, newA.get(j));
             }
 
-            b *= 1 - k * k;
+            s *= 1 - k * k;
         }
 
         return a;
     }
 
-    List<Double> calculateAutocorrelationCoefficients(List<Sample> window, int filterOder) {
+    List<Double> calculateAutocorrelationCoefficients(List<Sample> window, int filterOrder) {
         final List<Double> coefficients = new ArrayList<>();
 
-        for (int i = 0; i < filterOder; i++) {
+        for (int i = 0; i < filterOrder; i++) {
             double coefficient = 0;
 
             for (int j = 0; j < window.size() - i; j++) {

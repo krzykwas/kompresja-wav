@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import pg.eti.ksd.kompresjawav.stream.Sample;
 
 /**
  *
@@ -15,7 +16,7 @@ import java.util.Objects;
  */
 public class CompressedPacketImpl implements CompressedPacket {
 
-    private static final int BITS_PER_VALUE = 16;
+    private static final int BITS_PER_VALUE = 4;
     public static final int QUANTIZATION_LEVELS = (int) Math.pow(2, BITS_PER_VALUE);
     /**
      * Maximum error
@@ -23,11 +24,13 @@ public class CompressedPacketImpl implements CompressedPacket {
     private final double eMax;
     private final List<Double> coefficients = new ArrayList<>();
     private final List<Long> errors = new ArrayList<>();
+    private final List<Sample> initialValues = new ArrayList<>();
 
-    public CompressedPacketImpl(List<Double> coefficients, List<Double> errors) {
+    public CompressedPacketImpl(List<Double> coefficients, List<Double> errors, List<Sample> initialValues) {
         this.coefficients.addAll(coefficients);
         this.eMax = computeMaxError(errors);
         this.errors.addAll(compressErrors(errors));
+        this.initialValues.addAll(initialValues);
     }
 
     @Override
@@ -54,6 +57,11 @@ public class CompressedPacketImpl implements CompressedPacket {
         Collections.reverse(uncompressed);
 
         return uncompressed;
+    }
+
+    @Override
+    public List<Sample> getInitialValues() {
+        return initialValues;
     }
 
     static double computeMaxError(List<Double> errors) {
