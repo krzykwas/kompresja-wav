@@ -38,11 +38,7 @@ public class CoderImpl implements Coder {
     List<Double> computeErrors(List<Double> coefficients, List<Sample> samples) {
         final List<Double> errors = new ArrayList<>();
 
-        for (int i = 0; i < filterOrder; i++) {
-            errors.add(0.0);
-        }
-
-        for (int i = filterOrder; i < samples.size(); i++) {
+        for (int i = 0; i < samples.size(); i++) {
             double error = computeError(i, coefficients, samples);
             errors.add(error);
         }
@@ -66,11 +62,6 @@ public class CoderImpl implements Coder {
         List<Double> coefficients = levinsonDurbin.identifyCoefficients(window, filterOrder);
         List<Double> errors = computeErrors(coefficients, window.getSamples());
         List<Sample> initialValues = window.getSamples().subList(0, filterOrder);
-
-        List<Sample> samples = window.getSamples();
-        for (int i = 0; i < samples.size(); i++) {
-            System.out.println(samples.get(i).getValue() + " : " + coderUtilities.predictSample(i, errors, samples));
-        }
 
         return new CompressedPacketImpl(coefficients, errors, initialValues);
     }

@@ -17,6 +17,7 @@ import pg.eti.ksd.kompresjawav.coder.Coder;
 import pg.eti.ksd.kompresjawav.coder.CoderImpl;
 import pg.eti.ksd.kompresjawav.coder.Decoder;
 import pg.eti.ksd.kompresjawav.coder.DecoderImpl;
+import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
 import pg.eti.ksd.kompresjawav.exception.WavCompressException;
 import pg.eti.ksd.kompresjawav.stream.WavInputStream;
 import pg.eti.ksd.kompresjawav.stream.WavInputStreamImpl;
@@ -32,22 +33,24 @@ public class Main {
     public static void main(String[] args) throws WavCompressException {
         WavInputStream inputStream = null;
         WavOutputStream outputStream = null;
+        final int FILTER_ORDER = 10;
+
         try {
             final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(args[0]));
             final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);
-            inputStream = new WavInputStreamImpl(audioInputStream, 256, 10, audioInputStream.getFormat().getFrameSize());
+            inputStream = new WavInputStreamImpl(audioInputStream, 256, FILTER_ORDER, audioInputStream.getFormat().getFrameSize());
             outputStream = new WavOutputStreamImpl(new FileOutputStream(args[1]), audioInputStream.getFormat());
 
-            Coder coder = new CoderImpl(inputStream, 10);
-            Decoder decoder = new DecoderImpl(outputStream, 10);
+            Coder coder = new CoderImpl(inputStream, FILTER_ORDER);
+            Decoder decoder = new DecoderImpl(outputStream, FILTER_ORDER);
 
-//            for (CompressedPacket compressedPacket : coder) {
-//                decoder.decode(compressedPacket);
-//            }
-
-            for (int i = 0; i < 2; i++) {
-                decoder.decode(coder.next());
+            for (CompressedPacket compressedPacket : coder) {
+                decoder.decode(compressedPacket);
             }
+
+//            for (int i = 0; i < 2; i++) {
+//                decoder.decode(coder.next());
+//            }
         } catch (UnsupportedAudioFileException | IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
