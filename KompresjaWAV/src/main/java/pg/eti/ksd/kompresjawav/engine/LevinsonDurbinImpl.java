@@ -47,7 +47,7 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
 
             List<Double> newA = new ArrayList<>();
             for (int j = 0; j < i; j++) {
-                newA.add(a.get(j) - k * a.get(i - j));
+                newA.add(a.get(j) - k * a.get(i - j - 1));
             }
             newA.add(k);
 
