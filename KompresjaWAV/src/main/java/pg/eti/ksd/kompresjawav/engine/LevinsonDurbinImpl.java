@@ -27,7 +27,7 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
     @Override
     public List<Double> identifyCoefficients(WavWindow window, int filterOrder) {
         final List<Sample> y = window.getSamples();
-        final List<Double> p = calculateAutocorrelationCoefficients(y, filterOrder);
+        final List<Double> p = calculateAutocorrelationCoefficients(y, filterOrder + 1);
         final List<Double> a = new ArrayList<>();
 
         for (int i = 0; i < filterOrder; i++) {
@@ -36,17 +36,17 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
 
         double s = p.get(0);
 
-        for (int i = 1; i < filterOrder; i++) {
-            double k = p.get(i);
+        for (int i = 0; i < filterOrder; i++) {
+            double k = p.get(i + 1);
 
-            for (int j = 1; j <= i - 1; j++) {
+            for (int j = 0; j < i; j++) {
                 k -= a.get(j) * p.get(i - j);
             }
 
             k /= s;
 
             List<Double> newA = new ArrayList<>();
-            for (int j = 0; j < i - 1; j++) {
+            for (int j = 0; j < i; j++) {
                 newA.add(a.get(j) - k * a.get(i - j));
             }
             newA.add(k);
@@ -61,16 +61,17 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
         return a;
     }
 
-    List<Double> calculateAutocorrelationCoefficients(List<Sample> window, int filterOrder) {
+    List<Double> calculateAutocorrelationCoefficients(List<Sample> window, int n) {
         final List<Double> coefficients = new ArrayList<>();
 
-        for (int i = 0; i < filterOrder; i++) {
+        for (int i = 0; i < n; i++) {
             double coefficient = 0;
 
             for (int j = 0; j < window.size() - i; j++) {
                 coefficient += window.get(j).getValue() * window.get(j + i).getValue();
             }
 
+            coefficient /= window.size();
             coefficients.add(coefficient);
         }
 

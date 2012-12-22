@@ -17,7 +17,6 @@ import pg.eti.ksd.kompresjawav.coder.Coder;
 import pg.eti.ksd.kompresjawav.coder.CoderImpl;
 import pg.eti.ksd.kompresjawav.coder.Decoder;
 import pg.eti.ksd.kompresjawav.coder.DecoderImpl;
-import pg.eti.ksd.kompresjawav.engine.CompressedPacket;
 import pg.eti.ksd.kompresjawav.exception.WavCompressException;
 import pg.eti.ksd.kompresjawav.stream.WavInputStream;
 import pg.eti.ksd.kompresjawav.stream.WavInputStreamImpl;
@@ -42,8 +41,12 @@ public class Main {
             Coder coder = new CoderImpl(inputStream, 10);
             Decoder decoder = new DecoderImpl(outputStream, 10);
 
-            for (CompressedPacket compressedPacket : coder) {
-                decoder.decode(compressedPacket);
+//            for (CompressedPacket compressedPacket : coder) {
+//                decoder.decode(compressedPacket);
+//            }
+
+            for (int i = 0; i < 2; i++) {
+                decoder.decode(coder.next());
             }
         } catch (UnsupportedAudioFileException | IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

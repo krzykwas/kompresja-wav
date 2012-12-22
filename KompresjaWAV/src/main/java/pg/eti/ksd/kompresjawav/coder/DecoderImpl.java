@@ -19,10 +19,12 @@ public class DecoderImpl implements Decoder {
 
     private final int filterOrder;
     private final WavOutputStream outputStream;
+    private final CoderUtilities coderUtilities;
 
     public DecoderImpl(WavOutputStream outputStream, int filterOrder) {
         this.outputStream = outputStream;
         this.filterOrder = filterOrder;
+        this.coderUtilities = new CoderUtilitiesImpl();
     }
 
     @Override
@@ -30,7 +32,7 @@ public class DecoderImpl implements Decoder {
         final List<Double> coefficients = packet.getCoefficients();
         final List<Double> errors = packet.getErrors();
         final List<Sample> initialValues = packet.getInitialValues();
-        final List<Sample> predictedSamples = CoderUtilitiesImpl.predictSamples(coefficients, initialValues, filterOrder, errors);
+        final List<Sample> predictedSamples = coderUtilities.predictSamples(coefficients, initialValues, errors);
 
         WavWindow streamWindow = new WavWindowImpl();
         streamWindow.getSamples().addAll(predictedSamples.subList(filterOrder, predictedSamples.size()));

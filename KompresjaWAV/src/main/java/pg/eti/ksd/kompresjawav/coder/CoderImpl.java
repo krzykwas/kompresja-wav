@@ -24,6 +24,7 @@ public class CoderImpl implements Coder {
     private final WavInputStream stream;
     private final int filterOrder;
     private final LevinsonDurbin levinsonDurbin = new LevinsonDurbinImpl();
+    private final CoderUtilities coderUtilities = new CoderUtilitiesImpl();
 
     public CoderImpl(WavInputStream stream, int filterOrder) {
         this.stream = stream;
@@ -31,7 +32,7 @@ public class CoderImpl implements Coder {
     }
 
     double computeError(int i, List<Double> coefficients, List<Sample> samples) {
-        return samples.get(i).getValue() - CoderUtilitiesImpl.predictSample(coefficients, samples, filterOrder, i);
+        return samples.get(i).getValue() - coderUtilities.predictSample(i, coefficients, samples);
     }
 
     List<Double> computeErrors(List<Double> coefficients, List<Sample> samples) {
@@ -65,6 +66,11 @@ public class CoderImpl implements Coder {
         List<Double> coefficients = levinsonDurbin.identifyCoefficients(window, filterOrder);
         List<Double> errors = computeErrors(coefficients, window.getSamples());
         List<Sample> initialValues = window.getSamples().subList(0, filterOrder);
+
+        List<Sample> samples = window.getSamples();
+        for (int i = 0; i < samples.size(); i++) {
+            System.out.println(samples.get(i).getValue() + " : " + coderUtilities.predictSample(i, errors, samples));
+        }
 
         return new CompressedPacketImpl(coefficients, errors, initialValues);
     }

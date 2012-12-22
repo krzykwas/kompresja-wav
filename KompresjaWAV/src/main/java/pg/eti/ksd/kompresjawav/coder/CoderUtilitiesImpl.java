@@ -14,24 +14,28 @@ import pg.eti.ksd.kompresjawav.stream.SampleImpl;
  *
  * @author krzykwas
  */
-public class CoderUtilitiesImpl {
+public class CoderUtilitiesImpl implements CoderUtilities {
 
-    static double predictSample(List<Double> a, List<Sample> y, int filterOrder, int k) {
+    @Override
+    public double predictSample(int k, List<Double> a, List<Sample> y) {
         List<Double> reversedA = new ArrayList<>(a);
         Collections.reverse(reversedA);
+        final int n = reversedA.size();
 
         double value = 0;
-        for (int i = Math.max(filterOrder - k, 0); i < filterOrder; i++) {
-            value += y.get(k - filterOrder + i).getValue() * reversedA.get(i);
+        for (int i = Math.max(n - k, 0); i < n; i++) {
+            value += y.get(k - n + i).getValue() * reversedA.get(i);
         }
+
         return value;
     }
 
-    static List<Sample> predictSamples(List<Double> a, List<Sample> initialValues, final int filterOrder, List<Double> errors) {
+    @Override
+    public List<Sample> predictSamples(List<Double> a, List<Sample> initialValues, List<Double> errors) {
         final List<Sample> samples = new ArrayList<>(initialValues);
 
-        for (int i = filterOrder; i < errors.size(); i++) {
-            double value = predictSample(a, samples, filterOrder, i);
+        for (int i = a.size(); i < errors.size(); i++) {
+            double value = predictSample(i, a, samples);
             value += errors.get(i);
             samples.add(new SampleImpl((int) Math.round(value)));
         }
