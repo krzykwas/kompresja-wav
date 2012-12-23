@@ -24,7 +24,7 @@ public class CoderUtilitiesImpl implements CoderUtilities {
 
         double value = 0;
         for (int i = Math.max(n - k, 0); i < n; i++) {
-            value += y.get(k - n + i).getValue() * reversedA.get(i);
+            value -= y.get(k - n + i).getValue() * reversedA.get(i);
         }
 
         return value;

@@ -34,9 +34,9 @@ public class CoderImplTest {
         CoderImpl sut = new CoderImpl(null, 3);
 
         List<Double> coefficients = Arrays.asList(1.0, 2.0, 3.0);
-        List<Sample> samples = TestUtilities.asSamples(1, 2, 3, 4, 17);
+        List<Sample> samples = TestUtilities.asSamples(1, 2, 3, 4, -10);
         double actual = sut.computeError(4, coefficients, samples);
-        double expected = 17 - (4 * 1 + 3 * 2 + 3 * 2);
+        double expected = -10 - (-(4 * 1 + 3 * 2 + 3 * 2));
 
         Assert.assertEquals(expected, actual);
     }

@@ -44,13 +44,13 @@ public class Main {
             Coder coder = new CoderImpl(inputStream, FILTER_ORDER);
             Decoder decoder = new DecoderImpl(outputStream, FILTER_ORDER);
 
-            for (CompressedPacket compressedPacket : coder) {
-                decoder.decode(compressedPacket);
-            }
-
-//            for (int i = 0; i < 2; i++) {
-//                decoder.decode(coder.next());
+//            for (CompressedPacket compressedPacket : coder) {
+//                decoder.decode(compressedPacket);
 //            }
+
+            for (int i = 0; i < 11; i++) {
+                decoder.decode(coder.next());
+            }
         } catch (UnsupportedAudioFileException | IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         } finally {

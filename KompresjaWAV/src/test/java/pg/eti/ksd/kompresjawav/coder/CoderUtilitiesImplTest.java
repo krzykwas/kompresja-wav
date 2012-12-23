@@ -32,7 +32,7 @@ public class CoderUtilitiesImplTest {
 
         double actual = sut.predictSample(5, coefficients, samples);
 
-        Assert.assertEquals(1.0 * 15 + 2.0 * 14 + 3.0 * 12, actual);
+        Assert.assertEquals(-1.0 * 15 - 2.0 * 14 - 3.0 * 12, actual);
     }
 
     @Test
@@ -42,6 +42,6 @@ public class CoderUtilitiesImplTest {
 
         double actual = sut.predictSample(3, coefficients, samples);
 
-        Assert.assertEquals(1.0 * 12 + 2.0 * 11 + 3.0 * 10, actual);
+        Assert.assertEquals(-1.0 * 12 - 2.0 * 11 - 3.0 * 10, actual);
     }
 }
