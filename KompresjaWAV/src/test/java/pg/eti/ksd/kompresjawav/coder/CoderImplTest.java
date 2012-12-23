@@ -8,8 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import junit.framework.Assert;
 import org.junit.Test;
+import pg.eti.ksd.kompresjawav.TestUtilities;
 import pg.eti.ksd.kompresjawav.stream.Sample;
-import pg.eti.ksd.kompresjawav.stream.SampleImpl;
 
 /**
  *
@@ -22,9 +22,8 @@ public class CoderImplTest {
         CoderImpl sut = new CoderImpl(null, 3);
 
         List<Double> coefficients = Arrays.asList(1.0, 2.0, 3.0);
-        List<Sample> samples = Arrays.asList((Sample) new SampleImpl(7), new SampleImpl(2));
+        List<Sample> samples = TestUtilities.asSamples(7, 2);
         double actual = sut.computeError(0, coefficients, samples);
-
         double expected = 7;
 
         Assert.assertEquals(expected, actual);
@@ -35,9 +34,8 @@ public class CoderImplTest {
         CoderImpl sut = new CoderImpl(null, 3);
 
         List<Double> coefficients = Arrays.asList(1.0, 2.0, 3.0);
-        List<Sample> samples = Arrays.asList((Sample) new SampleImpl(1), new SampleImpl(2), new SampleImpl(3), new SampleImpl(4), new SampleImpl(17));
+        List<Sample> samples = TestUtilities.asSamples(1, 2, 3, 4, 17);
         double actual = sut.computeError(4, coefficients, samples);
-
         double expected = 17 - (4 * 1 + 3 * 2 + 3 * 2);
 
         Assert.assertEquals(expected, actual);
