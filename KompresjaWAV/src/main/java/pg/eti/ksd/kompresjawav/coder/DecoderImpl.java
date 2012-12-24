@@ -35,12 +35,9 @@ public class DecoderImpl implements Decoder {
         final List<Sample> predictedSamples = coderUtilities.predictSamples(coefficients, initialValues, errors);
 
         WavWindow streamWindow = new WavWindowImpl();
-        streamWindow.getSamples().addAll(predictedSamples.subList(filterOrder, predictedSamples.size()));
+        streamWindow.getSamples().addAll(predictedSamples);
         outputStream.write(streamWindow);
 
-        WavWindow resultWindow = new WavWindowImpl();
-        resultWindow.getSamples().addAll(predictedSamples);
-
-        return resultWindow;
+        return streamWindow;
     }
 }

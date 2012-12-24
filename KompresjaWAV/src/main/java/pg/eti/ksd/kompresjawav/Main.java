@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -34,22 +35,20 @@ public class Main {
         WavInputStream inputStream = null;
         WavOutputStream outputStream = null;
         final int FILTER_ORDER = 10;
+        final int WINDOW_SIZE = 256;
 
         try {
             final BufferedInputStream bis = new BufferedInputStream(new FileInputStream(args[0]));
             final AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bis);
-            inputStream = new WavInputStreamImpl(audioInputStream, 256, FILTER_ORDER, audioInputStream.getFormat().getFrameSize());
-            outputStream = new WavOutputStreamImpl(new FileOutputStream(args[1]), audioInputStream.getFormat());
+            final AudioFormat format = audioInputStream.getFormat();
+            inputStream = new WavInputStreamImpl(audioInputStream, WINDOW_SIZE, FILTER_ORDER, format.getFrameSize());
+            outputStream = new WavOutputStreamImpl(new FileOutputStream(args[1]), format);
 
             Coder coder = new CoderImpl(inputStream, FILTER_ORDER);
             Decoder decoder = new DecoderImpl(outputStream, FILTER_ORDER);
 
-//            for (CompressedPacket compressedPacket : coder) {
-//                decoder.decode(compressedPacket);
-//            }
-
-            for (int i = 0; i < 11; i++) {
-                decoder.decode(coder.next());
+            for (CompressedPacket compressedPacket : coder) {
+                decoder.decode(compressedPacket);
             }
         } catch (UnsupportedAudioFileException | IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

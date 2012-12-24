@@ -10,7 +10,7 @@ import pg.eti.ksd.kompresjawav.stream.Sample;
 import pg.eti.ksd.kompresjawav.stream.WavWindow;
 
 /**
- * Implemenetation of a Levinson-Durbin algorithm.
+ * Implementation of a Levinson-Durbin algorithm.
  *
  * @author krzykwas
  */
