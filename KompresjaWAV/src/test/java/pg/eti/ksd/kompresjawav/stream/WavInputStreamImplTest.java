@@ -10,6 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -153,5 +154,35 @@ public class WavInputStreamImplTest {
     public void test_iterator_returnsThis() throws WavCompressException {
         final WavInputStreamImpl sut = new WavInputStreamImpl(new StreamMock(new byte[]{}), 2, 1, 2);
         Assert.assertSame(sut, sut.iterator());
+    }
+
+    @Test
+    public void test_asSample_withAListOfZeros_returns0() {
+        Sample actual = WavInputStreamImpl.asSample(Arrays.asList(new Integer[]{0, 0}));
+        Assert.assertEquals(0, actual.getValue());
+    }
+
+    @Test
+    public void test_asSample_withAListOfZeroAnd3_returns3() {
+        Sample actual = WavInputStreamImpl.asSample(Arrays.asList(new Integer[]{0, 3}));
+        Assert.assertEquals(3, actual.getValue());
+    }
+
+    @Test
+    public void test_asSample_withAListOf255And251_returnsMinus5() {
+        Sample actual = WavInputStreamImpl.asSample(Arrays.asList(new Integer[]{255, 251}));
+        Assert.assertEquals(-5, actual.getValue());
+    }
+
+    @Test
+    public void test_asSample_withAListOf1And0_returns256() {
+        Sample actual = WavInputStreamImpl.asSample(Arrays.asList(new Integer[]{1, 0}));
+        Assert.assertEquals(256, actual.getValue());
+    }
+
+    @Test
+    public void test_asSample_withAListOf255And0_returnsMinus256() {
+        Sample actual = WavInputStreamImpl.asSample(Arrays.asList(new Integer[]{255, 0}));
+        Assert.assertEquals(-256, actual.getValue());
     }
 }

@@ -29,7 +29,7 @@ public class WavOutputStreamImplTest {
     }
 
     @Test
-    public void test_asBytes_with0returnsAListOfZeros() {
+    public void test_asBytes_with0_returnsAListOfZeros() {
         WavOutputStreamImpl sut = new WavOutputStreamImpl(null, getAudioFormat());
         List<Integer> actual = sut.asBytes(0);
         List<Integer> expected = Arrays.asList(new Integer[]{0, 0});
@@ -38,7 +38,7 @@ public class WavOutputStreamImplTest {
     }
 
     @Test
-    public void test_asBytes_with3returnsAListOfZeroAnd3() {
+    public void test_asBytes_with3_returnsAListOfZeroAnd3() {
         WavOutputStreamImpl sut = new WavOutputStreamImpl(null, getAudioFormat());
         List<Integer> actual = sut.asBytes(3);
         List<Integer> expected = Arrays.asList(new Integer[]{0, 3});
@@ -47,7 +47,7 @@ public class WavOutputStreamImplTest {
     }
 
     @Test
-    public void test_asBytes_withMinus5returnsAListOf255And251() {
+    public void test_asBytes_withMinus5_returnsAListOf255And251() {
         WavOutputStreamImpl sut = new WavOutputStreamImpl(null, getAudioFormat());
         List<Integer> actual = sut.asBytes(-5);
         List<Integer> expected = Arrays.asList(new Integer[]{255, 251});
@@ -56,7 +56,7 @@ public class WavOutputStreamImplTest {
     }
 
     @Test
-    public void test_asBytes_with256returnsAListOf1And0() {
+    public void test_asBytes_with256_returnsAListOf1And0() {
         WavOutputStreamImpl sut = new WavOutputStreamImpl(null, getAudioFormat());
         List<Integer> actual = sut.asBytes(256);
         List<Integer> expected = Arrays.asList(new Integer[]{1, 0});
@@ -65,7 +65,7 @@ public class WavOutputStreamImplTest {
     }
 
     @Test
-    public void test_asBytes_withMinus256returnsAListOf1And0() {
+    public void test_asBytes_withMinus256_returnsAListOf255And0() {
         WavOutputStreamImpl sut = new WavOutputStreamImpl(null, getAudioFormat());
         List<Integer> actual = sut.asBytes(-256);
         List<Integer> expected = Arrays.asList(new Integer[]{255, 0});

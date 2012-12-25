@@ -52,27 +52,38 @@ public class WavInputStreamImpl implements WavInputStream {
     }
 
     protected Sample nextSample() {
-        final int byteSize = Integer.SIZE / 8;
-        int data = 0;
+        List<Integer> bytes = new ArrayList<>();
 
         try {
-            int i;
-            for (i = 0; i < frameSize; i++) {
+            for (int i = 0; i < frameSize; i++) {
                 int bajt = stream.read();
+
                 if (bajt == -1) {
                     return null;
                 }
 
-                data = (data << 8) + bajt;
+                bytes.add(bajt);
             }
-
-            for (; i < byteSize; i++) {
-                data <<= 8;
-            }
-
-            data /= (1 << (8 * (byteSize - frameSize)));
         } catch (IOException ex) {
             Logger.getLogger(WavInputStreamImpl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return asSample(bytes);
+    }
+
+    static Sample asSample(List<Integer> bytes) {
+        int data = 0;
+
+        final int mask = 1 << (Integer.SIZE - 1);
+        int oldestBit = (bytes.get(0) & mask) >>> (Integer.SIZE - 1);
+
+        if (oldestBit == 1) {
+            data = -1;
+        }
+
+        for (int i = 1; i < bytes.size(); i++) {
+            data <<= 8;
+            data += bytes.get(i) & 0xff;
         }
 
         return new SampleImpl(data);
