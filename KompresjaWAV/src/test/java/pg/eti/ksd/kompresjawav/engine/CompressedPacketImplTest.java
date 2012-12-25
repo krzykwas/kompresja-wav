@@ -55,7 +55,7 @@ public class CompressedPacketImplTest {
     @Test
     public void test_compressErrors_packsValuesIntoOneLong() {
         List<Double> errors = new ArrayList<>();
-        for (int i = 0; i < 16; i++) {
+        for (int i = 0; i < 8; i++) {
             errors.add(1.0);
         }
 
