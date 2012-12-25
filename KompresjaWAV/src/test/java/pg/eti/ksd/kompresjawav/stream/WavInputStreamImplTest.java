@@ -21,7 +21,7 @@ import pg.eti.ksd.kompresjawav.exception.WavCompressException;
  *
  * @author krzykwas
  */
-public class StreamImplTest {
+public class WavInputStreamImplTest {
 
     private class StreamMock extends InputStream {
 

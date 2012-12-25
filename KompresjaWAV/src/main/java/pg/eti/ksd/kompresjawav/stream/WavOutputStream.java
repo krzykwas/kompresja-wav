@@ -5,6 +5,7 @@
 package pg.eti.ksd.kompresjawav.stream;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  *
@@ -15,4 +16,6 @@ public interface WavOutputStream {
     void close() throws IOException;
 
     void write(WavWindow window);
+
+    List<Integer> asBytes(int data);
 }

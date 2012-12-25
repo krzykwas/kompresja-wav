@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -30,23 +32,14 @@ public class WavOutputStreamImpl implements WavOutputStream {
 
     @Override
     public void write(WavWindow window) {
-        final int sampleSize = audioFormat.getSampleSizeInBits() / 8;
-        final int byteSize = Integer.SIZE / 8;
-
         for (Sample sample : window.getSamples()) {
-            int data = sample.getValue();
-            data *= (1 << (8 * (byteSize - sampleSize)));
+            final int data = sample.getValue();
+            List<Integer> bytes = asBytes(data);
 
-            for (int i = 0; i < byteSize - sampleSize; i++) {
-                data >>= 8;
-            }
-
-            for (int i = sampleSize - 1; i >= 0; i--) {
-                int bajt = data & (0xff << 8 * i);
-                bajt >>= 8 * i;
-
+            for (Integer bajt : bytes) {
                 byteArrayOutputStream.write(bajt);
             }
+
         }
     }
 
@@ -55,5 +48,24 @@ public class WavOutputStreamImpl implements WavOutputStream {
         ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         AudioInputStream audioInputStream = new AudioInputStream(byteArrayInputStream, audioFormat, byteArrayOutputStream.size());
         AudioSystem.write(audioInputStream, Type.WAVE, outputStream);
+    }
+
+    @Override
+    public List<Integer> asBytes(int data) {
+        final int sampleSize = audioFormat.getSampleSizeInBits() / 8;
+        final List<Integer> bytes = new ArrayList<>();
+
+        int oldestBit = (data & (1 << (Integer.SIZE - 1))) >>> (Integer.SIZE - 1);
+        int oldestByteMask = 0x7f << ((sampleSize - 1) * 8);
+        int oldestByte = (data & oldestByteMask) >> ((sampleSize - 1) * 8);
+        int bajt = (oldestBit << 7) | oldestByte;
+        bytes.add(bajt);
+
+        for (int i = sampleSize - 2; i >= 0; i--) {
+            int mask = 0xff << (8 * i);
+            bytes.add((data & mask) >> (8 * i));
+        }
+
+        return bytes;
     }
 }
