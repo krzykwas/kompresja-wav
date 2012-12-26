@@ -8,6 +8,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -68,20 +69,20 @@ public class WavInputStreamImpl implements WavInputStream {
             Logger.getLogger(WavInputStreamImpl.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        Collections.reverse(bytes);
+
         return asSample(bytes);
     }
 
     static Sample asSample(List<Integer> bytes) {
         int data = 0;
+        int firstByte = bytes.get(0);
 
-        final int mask = 1 << (Integer.SIZE - 1);
-        int oldestBit = (bytes.get(0) & mask) >>> (Integer.SIZE - 1);
-
-        if (oldestBit == 1) {
+        if ((firstByte & 0x80) >> 7 == 1) {
             data = -1;
         }
 
-        for (int i = 1; i < bytes.size(); i++) {
+        for (int i = 0; i < bytes.size(); i++) {
             data <<= 8;
             data += bytes.get(i) & 0xff;
         }

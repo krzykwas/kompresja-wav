@@ -38,6 +38,11 @@ public class DecoderImpl implements Decoder {
         streamWindow.getSamples().addAll(predictedSamples.subList(filterOrder, predictedSamples.size()));
         outputStream.write(streamWindow);
 
+        for (int i = 0; i < 50; i++) {
+            System.out.print(i + " : " + predictedSamples.get(i));
+            System.out.println(" : " + errors.get(i));
+        }
+
         return streamWindow;
     }
 }

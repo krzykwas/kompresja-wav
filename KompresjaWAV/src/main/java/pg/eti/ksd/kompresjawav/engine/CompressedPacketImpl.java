@@ -16,7 +16,7 @@ import pg.eti.ksd.kompresjawav.stream.Sample;
  */
 public class CompressedPacketImpl implements CompressedPacket {
 
-    private static final int BITS_PER_VALUE = 8;
+    private static final int BITS_PER_VALUE = 4;
     public static final int QUANTIZATION_LEVELS = (int) Math.pow(2, BITS_PER_VALUE);
     /**
      * Maximum error

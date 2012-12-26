@@ -92,4 +92,38 @@ public class LevinsonDurbinImplTest {
             Assert.assertEquals(expected.get(i), actual.get(i), 1e-5);
         }
     }
+
+    @Test
+    public void createFormattingWindow_withSize0_returnsAnEmptyList() {
+        List<Double> formattingWindow = sut.createFormattingWindow(0);
+        Assert.assertEquals(0, formattingWindow.size());
+    }
+
+    @Test
+    public void createFormattingWindow_withSize1_returnsAListOfSize1() {
+        List<Double> formattingWindow = sut.createFormattingWindow(1);
+        Assert.assertEquals(1, formattingWindow.size());
+    }
+
+    @Test
+    public void flattenWindow_correctlyFlattensWindowOfSize5_withSamplesEqualTo10() {
+        WavWindow window = new WavWindowImpl();
+        List<Sample> samples = window.getSamples();
+        for (int i = 0; i < 5; i++) {
+            samples.add(new SampleImpl(10));
+        }
+
+        List<Sample> expected = new ArrayList<>();
+        expected.add(new SampleImpl(2));
+        expected.add(new SampleImpl(7));
+        expected.add(new SampleImpl(10));
+        expected.add(new SampleImpl(8));
+        expected.add(new SampleImpl(2));
+
+        List<Sample> actual = sut.flattenWindow(window);
+
+        for (int i = 0; i < expected.size(); i++) {
+            Assert.assertEquals(expected.get(i), actual.get(i));
+        }
+    }
 }

@@ -49,6 +49,7 @@ public class Main {
 
             for (CompressedPacket compressedPacket : coder) {
                 decoder.decode(compressedPacket);
+                //break;
             }
         } catch (UnsupportedAudioFileException | IOException ex) {
             Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);

@@ -63,6 +63,11 @@ public class CoderImpl implements Coder {
         List<Double> errors = computeErrors(coefficients, window.getSamples());
         List<Sample> initialValues = window.getSamples().subList(0, filterOrder);
 
+        for (int i = 0; i < 50; i++) {
+            System.out.print(i + " : " + window.getSamples().get(i));
+            System.out.println(" : " + errors.get(i));
+        }
+
         return new CompressedPacketImpl(coefficients, errors, initialValues);
     }
 
