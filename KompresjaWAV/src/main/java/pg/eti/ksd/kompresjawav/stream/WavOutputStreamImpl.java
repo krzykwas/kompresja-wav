@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.sound.sampled.AudioFileFormat.Type;
 import javax.sound.sampled.AudioFormat;
@@ -36,10 +37,11 @@ public class WavOutputStreamImpl implements WavOutputStream {
             final int data = sample.getValue();
             List<Integer> bytes = asBytes(data);
 
+            Collections.reverse(bytes);
+
             for (Integer bajt : bytes) {
                 byteArrayOutputStream.write(bajt);
             }
-
         }
     }
 
