@@ -4,11 +4,13 @@
  */
 package pg.eti.ksd.kompresjawav.stream;
 
+import java.io.Serializable;
+
 /**
  *
  * @author krzykwas
  */
-public class SampleImpl implements Sample {
+public class SampleImpl implements Sample, Serializable {
 
     private int value;
 

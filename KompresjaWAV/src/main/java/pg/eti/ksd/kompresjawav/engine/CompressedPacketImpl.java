@@ -4,6 +4,7 @@
  */
 package pg.eti.ksd.kompresjawav.engine;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,17 +15,20 @@ import pg.eti.ksd.kompresjawav.stream.Sample;
  *
  * @author krzykwas
  */
-public class CompressedPacketImpl implements CompressedPacket {
+public class CompressedPacketImpl implements CompressedPacket, Serializable {
 
     private static final int BITS_PER_VALUE = 4;
     public static final int QUANTIZATION_LEVELS = (int) Math.pow(2, BITS_PER_VALUE);
     /**
      * Maximum error
      */
-    private final double eMax;
-    private final List<Float> coefficients = new ArrayList<>();
-    private final List<Long> errors = new ArrayList<>();
-    private final List<Sample> initialValues = new ArrayList<>();
+    private float eMax;
+    private List<Float> coefficients = new ArrayList<>();
+    private List<Long> errors = new ArrayList<>();
+    private List<Sample> initialValues = new ArrayList<>();
+
+    public CompressedPacketImpl() {
+    }
 
     public CompressedPacketImpl(List<Float> coefficients, List<Double> errors, List<Sample> initialValues) {
         this.coefficients.addAll(coefficients);
@@ -64,21 +68,21 @@ public class CompressedPacketImpl implements CompressedPacket {
         return initialValues;
     }
 
-    static double computeMaxError(List<Double> errors) {
-        double max = Double.NEGATIVE_INFINITY;
-        for (Double error : errors) {
+    static float computeMaxError(List<Double> errors) {
+        double max = Float.NEGATIVE_INFINITY;
+        for (double error : errors) {
             if (Math.abs(error) > max) {
                 max = Math.abs(error);
             }
         }
-        return max;
+        return (float) max;
     }
 
     List<Double> computeQuantizationLevels(final int quantizationLevels) {
         final List<Double> quantizedErrorLevels = new ArrayList<>();
 
         for (int i = 0; i < quantizationLevels; i++) {
-            quantizedErrorLevels.add(eMax * (-quantizationLevels + 1 + 2 * i) / quantizationLevels);
+            quantizedErrorLevels.add((double) eMax * (-quantizationLevels + 1 + 2 * i) / quantizationLevels);
         }
 
         return quantizedErrorLevels;
@@ -111,9 +115,10 @@ public class CompressedPacketImpl implements CompressedPacket {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + (int) (Double.doubleToLongBits(this.eMax) ^ (Double.doubleToLongBits(this.eMax) >>> 32));
-        hash = 79 * hash + Objects.hashCode(this.coefficients);
-        hash = 79 * hash + Objects.hashCode(this.errors);
+        hash = 97 * hash + Float.floatToIntBits(this.eMax);
+        hash = 97 * hash + Objects.hashCode(this.coefficients);
+        hash = 97 * hash + Objects.hashCode(this.errors);
+        hash = 97 * hash + Objects.hashCode(this.initialValues);
         return hash;
     }
 
@@ -126,7 +131,7 @@ public class CompressedPacketImpl implements CompressedPacket {
             return false;
         }
         final CompressedPacketImpl other = (CompressedPacketImpl) obj;
-        if (Double.doubleToLongBits(this.eMax) != Double.doubleToLongBits(other.eMax)) {
+        if (Float.floatToIntBits(this.eMax) != Float.floatToIntBits(other.eMax)) {
             return false;
         }
         if (!Objects.equals(this.coefficients, other.coefficients)) {
@@ -135,6 +140,44 @@ public class CompressedPacketImpl implements CompressedPacket {
         if (!Objects.equals(this.errors, other.errors)) {
             return false;
         }
+        if (!Objects.equals(this.initialValues, other.initialValues)) {
+            return false;
+        }
         return true;
     }
+//    private void writeObject(ObjectOutputStream out) throws IOException {
+//        out.writeFloat(eMax);
+//
+//        out.writeByte(coefficients.size());
+//        for (Float coefficient : coefficients) {
+//            out.writeFloat(coefficient);
+//        }
+//        for (Sample sample : initialValues) {
+//            out.writeShort(sample.getValue());
+//        }
+//
+//        out.writeShort(errors.size());
+//        for (Long error : errors) {
+//            out.writeLong(error);
+//        }
+//    }
+//
+//    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+//        init();
+//
+//        eMax = in.readFloat();
+//
+//        int n = in.readByte();
+//        for (int i = 0; i < n; i++) {
+//            coefficients.add(in.readFloat());
+//        }
+//        for (int i = 0; i < n; i++) {
+//            initialValues.add(new SampleImpl(in.readShort()));
+//        }
+//
+//        n = in.readShort();
+//        for (int i = 0; i < n; i++) {
+//            errors.add(in.readLong());
+//        }
+//    }
 }
