@@ -4,12 +4,16 @@
  */
 package pg.eti.ksd.kompresjawav.engine;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import pg.eti.ksd.kompresjawav.stream.Sample;
+import pg.eti.ksd.kompresjawav.stream.SampleImpl;
 
 /**
  *
@@ -23,18 +27,27 @@ public class CompressedPacketImpl implements CompressedPacket, Serializable {
      * Maximum error
      */
     private float eMax;
-    private List<Float> coefficients = new ArrayList<>();
-    private List<Long> errors = new ArrayList<>();
-    private List<Sample> initialValues = new ArrayList<>();
+    private List<Float> coefficients;
+    private List<Long> errors;
+    private List<Sample> initialValues;
 
     public CompressedPacketImpl() {
+        init();
     }
 
     public CompressedPacketImpl(List<Float> coefficients, List<Double> errors, List<Sample> initialValues) {
+        init();
+
         this.coefficients.addAll(coefficients);
         this.eMax = computeMaxError(errors);
         this.errors.addAll(compressErrors(errors));
         this.initialValues.addAll(initialValues);
+    }
+
+    private void init() {
+        coefficients = new ArrayList<>();
+        errors = new ArrayList<>();
+        initialValues = new ArrayList<>();
     }
 
     @Override
@@ -145,39 +158,40 @@ public class CompressedPacketImpl implements CompressedPacket, Serializable {
         }
         return true;
     }
-//    private void writeObject(ObjectOutputStream out) throws IOException {
-//        out.writeFloat(eMax);
-//
-//        out.writeByte(coefficients.size());
-//        for (Float coefficient : coefficients) {
-//            out.writeFloat(coefficient);
-//        }
-//        for (Sample sample : initialValues) {
-//            out.writeShort(sample.getValue());
-//        }
-//
-//        out.writeShort(errors.size());
-//        for (Long error : errors) {
-//            out.writeLong(error);
-//        }
-//    }
-//
-//    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
-//        init();
-//
-//        eMax = in.readFloat();
-//
-//        int n = in.readByte();
-//        for (int i = 0; i < n; i++) {
-//            coefficients.add(in.readFloat());
-//        }
-//        for (int i = 0; i < n; i++) {
-//            initialValues.add(new SampleImpl(in.readShort()));
-//        }
-//
-//        n = in.readShort();
-//        for (int i = 0; i < n; i++) {
-//            errors.add(in.readLong());
-//        }
-//    }
+
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.writeFloat(eMax);
+
+        out.writeByte(coefficients.size());
+        for (Float coefficient : coefficients) {
+            out.writeFloat(coefficient);
+        }
+        for (Sample sample : initialValues) {
+            out.writeShort(sample.getValue());
+        }
+
+        out.writeShort(errors.size());
+        for (Long error : errors) {
+            out.writeLong(error);
+        }
+    }
+
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        init();
+
+        eMax = in.readFloat();
+
+        int n = in.readByte();
+        for (int i = 0; i < n; i++) {
+            coefficients.add(in.readFloat());
+        }
+        for (int i = 0; i < n; i++) {
+            initialValues.add(new SampleImpl(in.readShort()));
+        }
+
+        n = in.readShort();
+        for (int i = 0; i < n; i++) {
+            errors.add(in.readLong());
+        }
+    }
 }
