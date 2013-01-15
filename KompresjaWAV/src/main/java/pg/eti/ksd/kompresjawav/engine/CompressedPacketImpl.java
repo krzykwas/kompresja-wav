@@ -22,11 +22,11 @@ public class CompressedPacketImpl implements CompressedPacket {
      * Maximum error
      */
     private final double eMax;
-    private final List<Double> coefficients = new ArrayList<>();
+    private final List<Float> coefficients = new ArrayList<>();
     private final List<Long> errors = new ArrayList<>();
     private final List<Sample> initialValues = new ArrayList<>();
 
-    public CompressedPacketImpl(List<Double> coefficients, List<Double> errors, List<Sample> initialValues) {
+    public CompressedPacketImpl(List<Float> coefficients, List<Double> errors, List<Sample> initialValues) {
         this.coefficients.addAll(coefficients);
         this.eMax = computeMaxError(errors);
         this.errors.addAll(compressErrors(errors));
@@ -34,7 +34,7 @@ public class CompressedPacketImpl implements CompressedPacket {
     }
 
     @Override
-    public List<Double> getCoefficients() {
+    public List<Float> getCoefficients() {
         return coefficients;
     }
 

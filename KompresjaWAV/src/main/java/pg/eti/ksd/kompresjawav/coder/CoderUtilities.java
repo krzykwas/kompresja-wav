@@ -13,7 +13,7 @@ import pg.eti.ksd.kompresjawav.stream.Sample;
  */
 interface CoderUtilities {
 
-    double predictSample(int k, List<Double> a, List<Sample> y);
+    double predictSample(int k, List<Float> a, List<Sample> y);
 
-    List<Sample> predictSamples(List<Double> a, List<Sample> initialValues, List<Double> errors);
+    List<Sample> predictSamples(List<Float> a, List<Sample> initialValues, List<Double> errors);
 }

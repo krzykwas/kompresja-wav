@@ -21,7 +21,7 @@ public class CoderUtilitiesTest {
 
     @Test
     public void test_predictSample_forFirstSample_returns0() {
-        List<Double> coefficients = Arrays.asList(1.0, 2.0, 3.0);
+        List<Float> coefficients = Arrays.asList(1.0f, 2.0f, 3.0f);
         List<Sample> samples = TestUtilities.asSamples(1, 2);
         double actual = coderUtilities.predictSample(0, coefficients, samples);
 
@@ -32,11 +32,11 @@ public class CoderUtilitiesTest {
 
     @Test
     public void test_predictSample_correctlyPredictsThe5thValueFromAListOf4Samples() {
-        List<Double> coefficients = Arrays.asList(1.0, 2.0, 3.0);
+        List<Float> coefficients = Arrays.asList(1.0f, 2.0f, 3.0f);
         List<Sample> samples = TestUtilities.asSamples(1, 2, 3, 4);
         double actual = coderUtilities.predictSample(4, coefficients, samples);
 
-        double expected = -4 * 1 - 3 * 2 - 3 * 2;
+        double expected = 4 * 1 + 3 * 2 + 3 * 2;
 
         Assert.assertEquals(expected, actual);
     }

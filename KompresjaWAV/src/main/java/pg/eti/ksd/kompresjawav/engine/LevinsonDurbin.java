@@ -21,5 +21,5 @@ public interface LevinsonDurbin {
      * @param filterOrder
      * @return list of coefficients of size equal to filterOrder
      */
-    List<Double> identifyCoefficients(WavWindow window, int filterOrder);
+    List<Float> identifyCoefficients(WavWindow window, int filterOrder);
 }

@@ -25,13 +25,13 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
      * @return list of coefficients of size equal to filterOrder
      */
     @Override
-    public List<Double> identifyCoefficients(WavWindow window, int filterOrder) {
+    public List<Float> identifyCoefficients(WavWindow window, int filterOrder) {
         final List<Sample> y = window.getSamples();
         final List<Double> p = calculateAutocorrelationCoefficients(y, filterOrder + 1);
-        final List<Double> a = new ArrayList<>();
+        final List<Float> a = new ArrayList<>();
 
         for (int i = 0; i < filterOrder; i++) {
-            a.add(0.0);
+            a.add(0.0f);
         }
 
         double s = p.get(0);
@@ -45,11 +45,11 @@ public class LevinsonDurbinImpl implements LevinsonDurbin {
 
             k /= s;
 
-            List<Double> newA = new ArrayList<>();
+            List<Float> newA = new ArrayList<>();
             for (int j = 0; j < i; j++) {
-                newA.add(a.get(j) - k * a.get(i - j - 1));
+                newA.add((float) (a.get(j) - k * a.get(i - j - 1)));
             }
-            newA.add(k);
+            newA.add((float) k);
 
             for (int j = 0; j < newA.size(); j++) {
                 a.set(j, newA.get(j));

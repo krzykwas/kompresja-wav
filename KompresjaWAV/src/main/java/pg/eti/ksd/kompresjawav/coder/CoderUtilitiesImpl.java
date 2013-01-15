@@ -17,8 +17,8 @@ import pg.eti.ksd.kompresjawav.stream.SampleImpl;
 public class CoderUtilitiesImpl implements CoderUtilities {
 
     @Override
-    public double predictSample(int k, List<Double> a, List<Sample> y) {
-        List<Double> reversedA = new ArrayList<>(a);
+    public double predictSample(int k, List<Float> a, List<Sample> y) {
+        List<Float> reversedA = new ArrayList<>(a);
         Collections.reverse(reversedA);
         final int n = reversedA.size();
 
@@ -31,7 +31,7 @@ public class CoderUtilitiesImpl implements CoderUtilities {
     }
 
     @Override
-    public List<Sample> predictSamples(List<Double> a, List<Sample> initialValues, List<Double> errors) {
+    public List<Sample> predictSamples(List<Float> a, List<Sample> initialValues, List<Double> errors) {
         final List<Sample> samples = new ArrayList<>(initialValues);
 
         for (int i = a.size(); i < errors.size(); i++) {

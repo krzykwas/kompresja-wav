@@ -13,7 +13,7 @@ import pg.eti.ksd.kompresjawav.stream.Sample;
  */
 public interface CompressedPacket {
 
-    List<Double> getCoefficients();
+    List<Float> getCoefficients();
 
     List<Double> getErrors();
 

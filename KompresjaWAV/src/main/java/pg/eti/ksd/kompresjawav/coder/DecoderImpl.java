@@ -29,7 +29,7 @@ public class DecoderImpl implements Decoder {
 
     @Override
     public WavWindow decode(CompressedPacket packet) {
-        final List<Double> coefficients = packet.getCoefficients();
+        final List<Float> coefficients = packet.getCoefficients();
         final List<Double> errors = packet.getErrors();
         final List<Sample> initialValues = packet.getInitialValues();
         final List<Sample> predictedSamples = coderUtilities.predictSamples(coefficients, initialValues, errors);

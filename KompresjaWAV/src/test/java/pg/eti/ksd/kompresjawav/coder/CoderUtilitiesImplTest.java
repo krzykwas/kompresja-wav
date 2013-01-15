@@ -27,21 +27,21 @@ public class CoderUtilitiesImplTest {
 
     @Test
     public void test_predictSample_correctlyPredictsValueBasedOnThreePrevious() {
-        List<Double> coefficients = Arrays.asList(new Double[]{1.0, 2.0, 3.0});
+        List<Float> coefficients = Arrays.asList(1.0f, 2.0f, 3.0f);
         List<Sample> samples = TestUtilities.asSamples(10, 11, 12, 14, 15);
 
         double actual = sut.predictSample(5, coefficients, samples);
 
-        Assert.assertEquals(-1.0 * 15 - 2.0 * 14 - 3.0 * 12, actual);
+        Assert.assertEquals(1.0 * 15 + 2.0 * 14 + 3.0 * 12, actual);
     }
 
     @Test
     public void test_predictSample_correctlyPredictsValueIfThereAreMoreCoefficientsThanSamples() {
-        List<Double> coefficients = Arrays.asList(new Double[]{1.0, 2.0, 3.0, 5.0, -1.0});
+        List<Float> coefficients = Arrays.asList(1.0f, 2.0f, 3.0f, 5.0f, -1.0f);
         List<Sample> samples = TestUtilities.asSamples(10, 11, 12);
 
         double actual = sut.predictSample(3, coefficients, samples);
 
-        Assert.assertEquals(-1.0 * 12 - 2.0 * 11 - 3.0 * 10, actual);
+        Assert.assertEquals(1.0 * 12 + 2.0 * 11 + 3.0 * 10, actual);
     }
 }

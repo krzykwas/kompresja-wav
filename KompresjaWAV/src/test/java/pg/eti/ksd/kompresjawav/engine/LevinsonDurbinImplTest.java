@@ -64,7 +64,7 @@ public class LevinsonDurbinImplTest {
         WavWindow window = new WavWindowImpl();
         window.getSamples().addAll(TestUtilities.asSamples(2, 5, 10, 8, 1, 3, 0, 5, 1, 2));
         List<Double> expected = Arrays.asList(new Double[]{0.67811158});
-        List<Double> actual = sut.identifyCoefficients(window, 1);
+        List<Float> actual = sut.identifyCoefficients(window, 1);
 
         Assert.assertEquals(expected.get(0), actual.get(0), 1e-5);
     }
@@ -74,7 +74,7 @@ public class LevinsonDurbinImplTest {
         WavWindow window = new WavWindowImpl();
         window.getSamples().addAll(TestUtilities.asSamples(2, 5, 10, 8, 1, 3, 0, 5, 1, 2));
         List<Double> expected = Arrays.asList(new Double[]{0.61421994, 0.09421994});
-        List<Double> actual = sut.identifyCoefficients(window, 2);
+        List<Float> actual = sut.identifyCoefficients(window, 2);
 
         for (int i = 0; i < expected.size(); i++) {
             Assert.assertEquals(expected.get(i), actual.get(i), 1e-5);
@@ -86,7 +86,7 @@ public class LevinsonDurbinImplTest {
         WavWindow window = new WavWindowImpl();
         window.getSamples().addAll(TestUtilities.asSamples(2, 5, 10, 8, 1, 3, 0, 5, 1, 2));
         List<Double> expected = Arrays.asList(new Double[]{0.63610843, 0.23691099, -0.23231262});
-        List<Double> actual = sut.identifyCoefficients(window, 3);
+        List<Float> actual = sut.identifyCoefficients(window, 3);
 
         for (int i = 0; i < expected.size(); i++) {
             Assert.assertEquals(expected.get(i), actual.get(i), 1e-5);
